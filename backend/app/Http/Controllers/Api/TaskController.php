@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\Task;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
-use Illuminate\Http\Request;
+
 
 class TaskController extends Controller
 {
@@ -40,7 +41,7 @@ class TaskController extends Controller
      * Update the specified resource in storage.
      * PATCH /api/tasks/{id}
      */
-    public function update(UpdateTaskRequest $request, string $id)
+    public function update(UpdateTaskRequest $request, Task $task)
     {
         $task->update($request->validated());
         return new TaskResource($taks);
@@ -50,7 +51,7 @@ class TaskController extends Controller
      * Remove the specified resource from storage.
      * DELETE /api/tasks/{id}
      */
-    public function destroy(string $id)
+    public function destroy(Task $task)
     {
         $task->delete();
         return response()->noContent();

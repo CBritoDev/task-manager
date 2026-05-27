@@ -2,8 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controller\Api\ProjectController;
-use App\Http\Controller\Api\TaskController;
+use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\Api\TaskController;
 
 //Limite de requisições de 60 por minuto
 Route::middleware('throttle:60,1')->group(function (){
