@@ -13,49 +13,66 @@ class ProjectApiTest extends TestCase
 
     public function test_can_list_projects()
     {
-        Project::create(['name' => 'Test Project', 'status' => 'active']);
+        Project::factory()->count(3)->create();
 
         $response = $this->getJson('api/projects');
 
         $response->assertStatus(200)
-                ->assertJsonStructure(['data' =>[['id','name','tasks_count']]]);
+                ->assertJsonStructure([
+                    'data' => [
+                        '*' => ['id', 'name', 'description', 'status', 'tasks_count', 'created_at']
+                    ]
+                ]);
         
     }
 
-    public function test_can_create_project()
+    public function test_can_create_project_with_valid_data()
     {
         $payload = [
-            'name' => 'New API Project',
-            'description' => 'Test description',
+            'name' => 'Test Project',
+            'description' => 'A valid description',
             'status' => 'active'
         ];
 
-        $response = $this->postJson('/api/projects',$payload);
+        $response = $this->postJson('/api/projects', $payload);
 
         $response->assertStatus(201)
-                ->assertJsonFragment(['name' => 'New API Project']);
+                ->assertJsonFragment(['name' => 'Test Project']);
 
-            $this->assertDatabaseHas('projects',['name'=>'New API Project']);
+        $this->assertDatabaseHas('projects', ['name' => 'Test Project']);
     }
 
-    public function test_can_list_tasks_for_a_project()
+    public function test_cannot_create_project_with_invalid_data()
     {
-        $project = Project::create([
-            'name' => 'Task Project', 
-            'status' => 'active'
-        ]);
+        // Enviando payload vazio para forçar erro de validação
+        $response = $this->postJson('/api/projects', []); 
 
-        Task::create([
-            'project_id' => $project->id, 
-            'title' => 'Test Task', 
-            'priority' => 'high', 
-            'status' => 'todo'
-        ]);
+        $response->assertStatus(422)
+                ->assertJsonValidationErrors(['name']);
+    }
 
-        $response = $this->getJson("/api/projects/{$project->id}/tasks");
+    public function test_can_filter_tasks_by_status()
+    {
+        $project = Project::factory()->create();
 
-        $response->assertStatus(200)
-                ->assertJsonFragment(['title' => 'Test Task']);
 
+        Task::factory()->create(['project_id' => $project->id, 'status' => 'todo']);
+        Task::factory()->create(['project_id' => $project->id, 'status' => 'done']);
+
+        $response = $this->getJson("/api/projects/{$project->id}/tasks?status=done");
+
+        $this->assertCount(1,$response->json('data'));
+        $this->assertEquals('done', $response->json('data.0.status'));
+    }
+
+    public function test_can_soft_delete_task()
+    {
+        $task = Task::factory()->create();
+
+        $response = $this->deleteJson("/api/tasks/{$task->id}");
+
+        $response->assertStatus(204); 
+
+        $this->assertSoftDeleted('tasks', ['id' => $task->id]);
     }
 }
