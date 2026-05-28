@@ -51,10 +51,9 @@ class TaskController extends Controller
      * Remove the specified resource from storage.
      * DELETE /api/tasks/{id}
      */
-    public function destroy($id)
+    public function destroy(Task $task)
     {
-        $taskToDelete = Task::findOrFail($id);
-        $taskToDelete->delete();
+        $task->delete();
         
         return response()->noContent();
     }

@@ -18,5 +18,5 @@ Route::middleware('throttle:60,1')->group(function (){
 
     //Rotas de tarefas independentes
     Route::patch('tasks/{task}',[TaskController::class,'update']);
-    Route::delete('tasks/{taks}',[TaskController::class,'destroy']);
+    Route::delete('tasks/{task}',[TaskController::class,'destroy']);
 });
