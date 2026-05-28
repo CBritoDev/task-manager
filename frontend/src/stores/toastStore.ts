@@ -4,7 +4,7 @@ import {ref} from 'vue'
 export type Toast = { id: number; message:string;type:'success' | 'error'}
 
 export const useToastStore = defineStore('toast',()=>{
-    cons toast = ref<Toast[]>([])
+    const toast = ref<Toast[]>([])
 
     const addToast = (message:string,type:'success'|'error' = 'success')=>{
         const id = Date.now()

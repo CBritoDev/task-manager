@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {api} from '.../services/api'
+import {api} from '../services/api'
 
 export interface Project{
     id:number;
@@ -37,7 +37,7 @@ export const useProjectStore = defineStore('project',{
             }catch(err:any){
                 this.error = err.response?.data?.message || 'Erro ao criar projeto';
                 throw err;
-            }finnaly{
+            }finally{
                 this.loading =false;
             }
         }
