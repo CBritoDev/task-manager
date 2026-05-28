@@ -1,3 +1,8 @@
 <template>
-  <router-view></router-view>
+  <ToastContainer />
+  <router-view />
 </template>
+
+<script setup>
+import ToastContainer from './components/ToastContainer.vue'
+</script>
