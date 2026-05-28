@@ -7,12 +7,14 @@ import { useToastStore } from '../stores/toastStore'
 const projectStore = useProjectStore()
 const toastStore = useToastStore()
 const isModalOpen = ref(false)
+const isSaving = ref(false)
 
 onMounted(() => {
     projectStore.fetchProjects()
 })
 
 const handleCreateProject = async (projectData: { name: string, description: string }) => {
+    isSaving.value = true
     try {
         await projectStore.createProject(projectData)
         toastStore.addToast('Projeto criado com sucesso!', 'success')
@@ -20,6 +22,8 @@ const handleCreateProject = async (projectData: { name: string, description: str
         await projectStore.fetchProjects();
     } catch (e) {
         toastStore.addToast('Erro ao criar projeto.', 'error')
+    } finally {
+        isSaving.value = false
     }
 }
 
@@ -46,6 +50,6 @@ const handleCreateProject = async (projectData: { name: string, description: str
             </RouterLink>
         </div>
 
-        <ProjectModal :isOpen="isModalOpen" @close="isModalOpen = false" @save="handleCreateProject" />
+        <ProjectModal :isOpen="isModalOpen" :isSaving="isSaving" @close="isModalOpen = false" @save="handleCreateProject" />
     </div>
 </template>

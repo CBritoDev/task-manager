@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const props = defineProps<{ isOpen: boolean }>()
+const props = defineProps<{ isOpen: boolean, isSaving?: boolean }>()
 const emit = defineEmits(['close', 'save'])
 
 const name = ref('')
@@ -34,9 +34,11 @@ const save = () => {
                         class="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors font-medium">
                         Cancelar
                     </button>
-                    <button @click="save"
-                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg cursor-pointer transition-colors font-medium shadow-sm">
-                        Criar Projeto
+                    <button @click="save" :disabled="isSaving"
+                        class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all shadow-sm disabled:opacity-70 disabled:cursor-not-allowed">
+                        <span v-if="isSaving"
+                            class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                        {{ isSaving ? 'Criando...' : 'Criar Projeto' }}
                     </button>
             </div>
         </div>

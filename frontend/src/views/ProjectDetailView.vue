@@ -12,6 +12,7 @@ const route = useRoute();
 const router = useRouter();
 const projectId = route.params.id as string
 const isTaskModalOpen = ref(false)
+const isSavingTask = ref(false)
 
 const { tasks, loading, error, fetchTasks, updateTask, createTask } = useTasks()
 
@@ -32,6 +33,7 @@ onMounted(() => {
 
 
 const handleCreateTask = async (taskData: any) => {
+    isSavingTask.value = true
     try {
         await createTask(projectId, taskData)
         toastStore.addToast('Tarefa criada!', 'success')
@@ -39,6 +41,8 @@ const handleCreateTask = async (taskData: any) => {
         await fetchTasks(projectId)
     } catch (e) {
         toastStore.addToast('Erro ao criar tarefa', 'error')
+    }finally{
+        isSavingTask.value = false
     }
 }
 
@@ -104,7 +108,7 @@ const onTaskStatusChange = async (taskId: number, newStatus: any) => {
             <TaskCard v-for="task in tasks" :key="task.id" :task="task" :onStatusChange="onTaskStatusChange" />
         </div>
 
-        <TaskModal :isOpen="isTaskModalOpen" :projectId="projectId" @close="isTaskModalOpen = false"
+        <TaskModal :isOpen="isTaskModalOpen" :projectId="projectId" :isSaving="isSavingTask" @close="isTaskModalOpen = false"
             @save="handleCreateTask" />
     </div>
 </template>

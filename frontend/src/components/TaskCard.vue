@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import type { Task } from '../stores/taskStore'
+
+const isUpdating = ref(false)
 
 const props = defineProps<{
     task: Task;
@@ -14,9 +16,11 @@ const isOverdue = computed(() => {
     return props.task.due_date < today;
 })
 
-const handleStatusChange = (event: Event) => {
+const handleStatusChange = async (event: Event) => {
     const target = event.target as HTMLSelectElement;
-    props.onStatusChange(props.task.id, target.value as Task['status']);
+    isUpdating.value = true;
+    await props.onStatusChange(props.task.id, target.value as Task['status']);
+    isUpdating.value = false;
 }
 
 const priorityColors = {
@@ -62,7 +66,7 @@ const priorityLabels = {
             </div>
 
             <!-- Dropdown de Status  -->
-            <select :value="task.status" @change="handleStatusChange"
+            <select :value="task.status" @change="handleStatusChange" :disabled="isUpdating"
                 class="text-sm border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 py-1.5 px-2 cursor-pointer bg-gray-50 font-medium outline-none">
                 <option value="todo">A Fazer</option>
                 <option value="in_progress">Em Progresso</option>
