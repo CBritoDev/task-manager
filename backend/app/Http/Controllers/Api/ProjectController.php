@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Resources\ProjectResource;
 
-class ProjectController extends Controller
+class ProjectController 
 {
     /**
      * Display a listing of the resource.
