@@ -23,7 +23,8 @@ Sou um profissional pragmático, focado em resolver problemas, adaptar-me rapida
 
 ## Setup do Backend (Laravel)
 
-O backend foi configurado para rodar com SQLite, eliminando a necessidade de Docker ou configurações externas complexas.
+O backend foi configurado para rodar com SQLite, eliminando a necessidade de Docker ou configurações externas complexas. 
+É necessária a instalaçao do PHP e Composer para realização dos passos abaixo.
 
 ### 1. Navegue até a pasta do backend
 
