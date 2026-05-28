@@ -3,7 +3,7 @@ import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useTasks } from '../composables/useTasks'
 import TaskCard from '../components/TaskCard.vue'
-import TaskModal from '../components/TaskModal.vue' 
+import TaskModal from '../components/TaskModal.vue'
 import { debounce } from '../utils/debounce'
 import { useToastStore } from '../stores/toastStore'
 
@@ -11,7 +11,7 @@ const toastStore = useToastStore()
 const route = useRoute();
 const router = useRouter();
 const projectId = route.params.id as string
-const isTaskModalOpen = ref(false) 
+const isTaskModalOpen = ref(false)
 
 const { tasks, loading, error, fetchTasks, updateTask, createTask } = useTasks()
 
@@ -61,7 +61,7 @@ const onTaskStatusChange = async (taskId: number, newStatus: any) => {
                     <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                         <h1 class="text-3xl font-bold text-gray-900">Tarefas do Projeto</h1>
                         <button @click="isTaskModalOpen = true"
-                            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-5 rounded-lg transition-colors">
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-5 rounded-lg cursor-pointer transition-all shadow-sm hover:shadow-md">
                             + Nova Tarefa
                         </button>
                     </div>
@@ -80,7 +80,8 @@ const onTaskStatusChange = async (taskId: number, newStatus: any) => {
             </div>
 
             <div class="flex-1">
-                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Prioridade</label>
+                <label
+                    class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Prioridade</label>
                 <select v-model="filterPriority"
                     class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border bg-gray-50">
                     <option value="">Todas as Prioridades</option>

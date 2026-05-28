@@ -29,7 +29,8 @@ const handleCreateProject = async (projectData: { name: string, description: str
     <div class="p-8">
         <div class="flex justify-between mb-8">
             <h1 class="text-2xl font-bold">Meus Projetos</h1>
-            <button @click="isModalOpen = true" class="bg-blue-600 text-white px-4 py-2 rounded-lg">
+            <button @click="isModalOpen = true"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg cursor-pointer transition-all shadow-sm hover:shadow-md">
                 + Novo Projeto
             </button>
         </div>
