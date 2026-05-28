@@ -14,7 +14,8 @@ const projectId = route.params.id as string
 const isTaskModalOpen = ref(false)
 const isSavingTask = ref(false)
 
-const { tasks, loading, error, fetchTasks, updateTask, createTask } = useTasks()
+
+const { tasks, loading, error, fetchTasks, updateTask, createTask, deleteTask } = useTasks()
 
 const filterStatus = ref('')
 const filterPriority = ref('')
@@ -54,6 +55,17 @@ const onTaskStatusChange = async (taskId: number, newStatus: any) => {
         toastStore.addToast('Erro ao atualizar status.', 'error')
     }
 }
+
+const onTaskDelete = async (taskId: number) => {
+    if (!confirm('Tem certeza que deseja excluir esta tarefa?')) return;
+    
+    try {
+        await deleteTask(taskId);
+        toastStore.addToast('Tarefa excluída com sucesso!', 'success');
+    } catch (e) {
+        toastStore.addToast('Erro ao excluir tarefa.', 'error');
+    }
+}
 </script>
 
 <template>
@@ -61,14 +73,15 @@ const onTaskStatusChange = async (taskId: number, newStatus: any) => {
         <div class="mb-8">
             <button @click="router.push('/')"
                 class="text-gray-500 hover:text-blue-600 flex items-center text-sm font-medium mb-4 transition-colors">
-                <- Voltar para Projetos </button>
-                    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-                        <h1 class="text-3xl font-bold text-gray-900">Tarefas do Projeto</h1>
-                        <button @click="isTaskModalOpen = true"
-                            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-5 rounded-lg cursor-pointer transition-all shadow-sm hover:shadow-md">
-                            + Nova Tarefa
-                        </button>
-                    </div>
+                &larr; Voltar para Projetos 
+            </button>
+            <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                <h1 class="text-3xl font-bold text-gray-900">Tarefas do Projeto</h1>
+                <button @click="isTaskModalOpen = true"
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-5 rounded-lg cursor-pointer transition-all shadow-sm hover:shadow-md">
+                    + Nova Tarefa
+                </button>
+            </div>
         </div>
 
         <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm mb-8 flex flex-col sm:flex-row gap-4">
@@ -84,8 +97,7 @@ const onTaskStatusChange = async (taskId: number, newStatus: any) => {
             </div>
 
             <div class="flex-1">
-                <label
-                    class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Prioridade</label>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Prioridade</label>
                 <select v-model="filterPriority"
                     class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border bg-gray-50">
                     <option value="">Todas as Prioridades</option>
@@ -105,7 +117,14 @@ const onTaskStatusChange = async (taskId: number, newStatus: any) => {
         </div>
 
         <div v-else class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            <TaskCard v-for="task in tasks" :key="task.id" :task="task" :onStatusChange="onTaskStatusChange" />
+            <!-- 3. Passamos a função onDelete para o Card -->
+            <TaskCard 
+                v-for="task in tasks" 
+                :key="task.id" 
+                :task="task" 
+                :onStatusChange="onTaskStatusChange" 
+                :onDelete="onTaskDelete" 
+            />
         </div>
 
         <TaskModal :isOpen="isTaskModalOpen" :projectId="projectId" :isSaving="isSavingTask" @close="isTaskModalOpen = false"

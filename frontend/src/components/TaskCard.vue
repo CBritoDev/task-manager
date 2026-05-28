@@ -1,26 +1,22 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import type { Task } from '../stores/taskStore'
-
-const isUpdating = ref(false)
 
 const props = defineProps<{
     task: Task;
     onStatusChange: (taskId: number, newStatus: Task['status']) => void;
+    onDelete: (taskId: number) => void;
 }>()
 
 const isOverdue = computed(() => {
     if (props.task.status === 'done' || !props.task.due_date) return false;
-
     const today = new Date().toISOString().split('T')[0];
     return props.task.due_date < today;
 })
 
-const handleStatusChange = async (event: Event) => {
+const handleStatusChange = (event: Event) => {
     const target = event.target as HTMLSelectElement;
-    isUpdating.value = true;
-    await props.onStatusChange(props.task.id, target.value as Task['status']);
-    isUpdating.value = false;
+    props.onStatusChange(props.task.id, target.value as Task['status']);
 }
 
 const priorityColors = {
@@ -40,14 +36,26 @@ const priorityLabels = {
     <div class="bg-white border rounded-xl p-5 transition-all flex flex-col h-full"
         :class="isOverdue ? 'border-red-400 shadow-sm shadow-red-100' : 'border-gray-200 shadow-sm hover:shadow-md'">
         <div class="flex justify-between items-start mb-3">
-            <h3 class="text-lg font-bold text-gray-800 line-clamp-1" :title="task.title">{{ task.title }}</h3>
-        </div>
+            <div class="flex items-center gap-2">
+                <h3 class="text-lg font-bold text-gray-800 line-clamp-1" :title="task.title">{{ task.title }}</h3>
+                <!-- Badge de Atraso -->
+                <span v-if="isOverdue"
+                    class="bg-red-100 text-red-700 text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-wider flex items-center whitespace-nowrap">
+                    Atrasada
+                </span>
+            </div>
 
-        <!-- Badge de Atraso--->>
-        <span v-if="isOverdue"
-            class="bg-red-100 text-red-700 text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-wider flex items-center whitespace-nowrap ml-2">
-            Atrasada
-        </span>
+            <!-- Botão de Deletar -->
+            <button @click="onDelete(task.id)"
+                class="text-gray-400 hover:text-red-600 transition-colors cursor-pointer p-1 rounded-md hover:bg-red-50"
+                title="Excluir tarefa">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                </svg>
+            </button>
+        </div>
 
         <p class="text-gray-600 text-sm mb-5 flex-grow line-clamp-2">
             {{ task.description }}
@@ -65,8 +73,8 @@ const priorityLabels = {
                 </span>
             </div>
 
-            <!-- Dropdown de Status  -->
-            <select :value="task.status" @change="handleStatusChange" :disabled="isUpdating"
+
+            <select :value="task.status" @change="handleStatusChange"
                 class="text-sm border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 py-1.5 px-2 cursor-pointer bg-gray-50 font-medium outline-none">
                 <option value="todo">A Fazer</option>
                 <option value="in_progress">Em Progresso</option>
